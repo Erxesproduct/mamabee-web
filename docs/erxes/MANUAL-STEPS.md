@@ -102,3 +102,45 @@ erxes:
    submission. Staff move it to «Баталгаажсан» when the QPay invoice shows paid.
 4. SMS templates: Zochil sends «Tani zahialga burtgegdlee…» and «…amjilttai batalgaajlaa» (order_sms_template_1/2).
    Recreate them in erxes (Automations → SMS) for «registered» and «paid».
+
+## 1.5 Test order from cart to receipt
+
+**Verified on a local production build:** `npm run test:order -- http://localhost:3123`: **all 33 checks passed**:
+empty cart, unknown product, numeric id, the card alone refused / with goods priced, sold-out refused, stock limit,
+6,000₮ fee, free over 500,000₮, a variant priced by its own id, terms required, A zone required, district / khoroo /
+address, QPay accepted, transfer and unknown payment refused, company registry, phone, email, quantity limit, the
+browser's price ignored, same checkout key → same reference, honeypot, payment check 400 / 503. Without erxes the API
+answers `503 not_configured`; the checkout then shows the phone number and keeps the cart. `--send` was **not run**
+(env vars not set). No payment was made.
+
+Steps for the real test (authorized credentials only):
+
+1. **Frontline → Forms → Create** «Вэбсайт захиалга» with fields Нэр, Утас, Имэйл, Захиалга; copy the form id and the
+   field ids into `ERXES_ORDER_FORM_ID` / `ERXES_ORDER_FIELD_IDS`. Set `ERXES_API_URL`, `ERXES_PAYMENT_IDS`. Redeploy.
+2. `npm run test:order -- https://<production url> --send`: one order, two items.
+3. Pay the invoice only with QPay's test merchant or with explicit authorization for a real charge; check that
+   `/order/<reference>` shows «Төлбөр төлөгдлөө», move the card, issue the eBarimt, mark delivered, void the test.
+
+## Permissions (erxes)
+
+- Staff who handle orders: Sales (cards), Forms (submissions), Payments (view invoices), eBarimt (issue).
+- Only the owner: Settings → Payments, Settings → eBarimt, product import.
+- The website uses only public erxes mutations; it needs no admin token.
+
+---
+
+## Open questions for MamaBee
+
+1. **Outside A zone / countryside**: the Zochil countryside switch is on, but there is only the A zone option. Fee and
+   carrier for other districts and aimags?
+2. **Free delivery**: Zochil's limit is 500,000₮ (free when the goods are over it). Is that still the rule?
+3. **QPay merchant**: Zochil's `Z_MAMABEE` is not usable from erxes. MamaBee's own QPay merchant?
+4. **Stock**: Zochil counts stock per product, not per size. 8 products are at 0 (shown sold out); others are not
+   capped. Real stock per size?
+5. **Size exchange fee** (6,000₮): paid to the courier or by QPay?
+6. **Comfy huggy gift hat**: the product text says to pick a free hat and write it in the order note. Still running?
+7. **TIN / PosAPI** for eBarimt.
+8. **Domain**: point mamabee.mn at the new site when ready.
+9. **Exposed credentials**: rotate the Pocket credentials (see the warning at the top).
+10. **Blue comfort set**: the text says «Үндсэн үнэ 238.000 / Багцын үнэ 208.000», but Zochil has no «before» price;
+    the site shows 208,000₮ only. Add 238,000₮ as the before-sale price?
