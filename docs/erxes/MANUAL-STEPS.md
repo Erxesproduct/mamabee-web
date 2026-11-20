@@ -65,3 +65,14 @@ Steps:
 3. Copy the payment method's `_id` into Vercel as `ERXES_PAYMENT_IDS`.
 4. Invoice expiry: set the QPay invoice lifetime to 10 minutes if the shop keeps the 10-minute rule.
 5. **Not yet tested** against a real QPay merchant. Do not call payments working until step 2 and 1.5 pass.
+
+## 1.3 eBarimt
+
+The website never makes a receipt. The checkout asks «Хувь хүн» or «Байгууллага» (7-digit registry number, checked on
+the server) and writes it on the order. The receipt is issued in erxes by staff after payment.
+
+1. Collect from MamaBee: company or person name and TIN (Zochil `regno` is empty), district code, VAT status,
+   product classification codes (clothing, textiles, baby goods).
+2. Register for **PosAPI 3.0** (ebarimt.mn) and install the PosAPI service.
+3. **Settings → eBarimt**: PosAPI URL, TIN, district code, VAT switches; assign it to the website pipeline.
+4. For every paid order: issue the receipt once (goods + delivery fee if charged) and send the lottery number.
