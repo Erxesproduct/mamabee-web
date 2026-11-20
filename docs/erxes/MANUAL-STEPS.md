@@ -46,3 +46,22 @@ Steps:
 3. **Products & Services → Import**: `mamabee-products.csv`. One row per variant, code `MB-<productId>-<variantId>`
    (the same id the website sends with every order line), unit price and price before sale in MNT.
 4. Spot-check 10 products (price, size) against mamabee.mn.
+
+## 1.2 Payment (QPay)
+
+Zochil rule, word for word: «Захиалга хийснээс хойш 10 минутын дотор төлбөрөө төлсөнөөр захиалга баталгаажна.» The only
+Zochil checkout method is QPay (merchant `Z_MAMABEE`, through Zochil). The website:
+
+- records the order in erxes first, then creates a QPay invoice with the erxes payment plugin (`generateInvoiceUrl`,
+  public). The customer pays on the erxes payment page and returns to `/order/<reference>`, which asks `invoicesCheck`
+  every 5 s.
+- never asks for money for an order staff cannot see. Bank transfer is not offered (no transfer rule on Zochil).
+
+Steps:
+
+1. Get MamaBee's own QPay merchant credentials (`client_id`, `client_secret`, `invoice_code`). The Zochil merchant
+   `Z_MAMABEE` belongs to Zochil's QPay account; ask QPay for a merchant of MamaBee's own (open question 3).
+2. **Settings → Payments → Add → QPay (v2)**: enter them. Make a 100₮ test invoice in erxes.
+3. Copy the payment method's `_id` into Vercel as `ERXES_PAYMENT_IDS`.
+4. Invoice expiry: set the QPay invoice lifetime to 10 minutes if the shop keeps the 10-minute rule.
+5. **Not yet tested** against a real QPay merchant. Do not call payments working until step 2 and 1.5 pass.
