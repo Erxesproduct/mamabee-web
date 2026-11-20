@@ -1,0 +1,16 @@
+﻿code,name,parent code
+MB,MamaBee,
+MB-MAMA,Ээжид,MB
+MB-MAMA-1,Халад,MB-MAMA
+MB-MAMA-2,Даашинз,MB-MAMA
+MB-MAMA-3,Хослол,MB-MAMA
+MB-NURSING,Хөхүүл үе,MB
+MB-NURSING-1,Baby pouch,MB-NURSING
+MB-NURSING-2,Comfy huggy,MB-NURSING
+MB-NURSING-3,Хөхүүл дэр,MB-NURSING
+MB-BABY,Хүүхдэд,MB
+MB-BABY-1,Малгай,MB-BABY
+MB-BABY-2,Lovey,MB-BABY
+MB-SETS,Бэлгийн багц,MB
+MB-SETS-1,Багц,MB-SETS
+MB-DELIVERY,Хүргэлт,MB
