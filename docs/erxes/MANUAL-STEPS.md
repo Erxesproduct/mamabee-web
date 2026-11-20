@@ -76,3 +76,29 @@ the server) and writes it on the order. The receipt is issued in erxes by staff 
 2. Register for **PosAPI 3.0** (ebarimt.mn) and install the PosAPI service.
 3. **Settings → eBarimt**: PosAPI URL, TIN, district code, VAT switches; assign it to the website pipeline.
 4. For every paid order: issue the receipt once (goods + delivery fee if charged) and send the lottery number.
+
+## 1.4 Delivery zones, fees and order statuses
+
+Website (done), from the Zochil delivery option, delivery rule and terms:
+
+| Zochil | Website |
+| --- | --- |
+| Option «A бүс», 6,000₮, `delivery_price_limit` 500,000₮ | 6,000₮; free when the goods are **over** 500,000₮ (Zochil rule) |
+| «Урагшаа Зайсан, Нисэх хойшоо 7 буудал, зүүн тийшээ Таван шар, баруун тийшээ Ботаник хүртэл» | shown at checkout; the customer ticks «Миний хаяг A бүсэд багтана» (checked on the server) |
+| «Хүргэлт 24-48 цагийн дотор хүргэгдэнэ.» | everywhere |
+| Countryside switch on, but no option or fee | not offered online; the site asks to call first (open question 1) |
+| «48 цагийн дотор хүргэлтээр размераа солиулах … 6000 нэмж бодогдоно. Буцаалт байхгүй.» | required checkbox at checkout; /info |
+| Greeting card: no message can be written | shown next to the card |
+
+- Fees and rules live in `src/content/business.ts`; change them there and in the erxes delivery products.
+
+erxes:
+
+1. Import `docs/erxes/mamabee-delivery.csv` (`MB-DELIVERY-A` 6,000₮, `MB-EXCHANGE` 6,000₮).
+2. **Sales → Boards → «Онлайн захиалга» → pipeline «Вэбсайт»**, stages (as on the website):
+   Төлбөр хүлээгдэж байна → Баталгаажсан → Савлаж байна → Хүргэлтэд гарсан → Хүргэгдсэн, plus Размер солих and
+   Цуцлагдсан (not paid within 10 minutes).
+3. **Frontline → Forms → (order form) → Settings**: create a sales card in «Төлбөр хүлээгдэж байна» for every
+   submission. Staff move it to «Баталгаажсан» when the QPay invoice shows paid.
+4. SMS templates: Zochil sends «Tani zahialga burtgegdlee…» and «…amjilttai batalgaajlaa» (order_sms_template_1/2).
+   Recreate them in erxes (Automations → SMS) for «registered» and «paid».
